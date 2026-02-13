@@ -5,6 +5,7 @@ namespace CreatorsApi\Laravel;
 use Amazon\CreatorsAPI\v1\Configuration;
 use Amazon\CreatorsAPI\v1\com\amazon\creators\api\DefaultApi;
 use GuzzleHttp\Client;
+use GuzzleHttp\ClientInterface;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Support\ServiceProvider;
 
@@ -56,17 +57,27 @@ class CreatorsApiServiceProvider extends ServiceProvider
             return $config;
         });
 
-        $this->app->singleton(DefaultApi::class, function (Container $app) {
+        $this->app->singleton(ClientInterface::class, function (Container $app) {
             $settings = $app->make('config')->get('creatorsapi', []);
             $httpOptions = $settings['http'] ?? [];
             $httpOptions = $this->filterNulls($httpOptions);
 
-            $client = new Client($httpOptions);
-
-            return new DefaultApi($client, $app->make(Configuration::class));
+            return new Client($httpOptions);
         });
 
-        $this->app->alias(DefaultApi::class, 'creatorsapi');
+        $this->app->singleton(DefaultApi::class, function (Container $app) {
+            return new DefaultApi(
+                $app->make(ClientInterface::class),
+                $app->make(Configuration::class),
+            );
+        });
+
+        $this->app->singleton(CreatorsApiClientInterface::class, function (Container $app) {
+            return new CreatorsApiClient($app->make(DefaultApi::class));
+        });
+
+        $this->app->alias(CreatorsApiClientInterface::class, CreatorsApiClient::class);
+        $this->app->alias(CreatorsApiClientInterface::class, 'creatorsapi');
     }
 
     public function boot(): void
