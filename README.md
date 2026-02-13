@@ -2,6 +2,11 @@
 
 Small Laravel wrapper around the Amazon Creators API PHP SDK.
 
+## Requirements
+
+- PHP 8.1+
+- Laravel 9-12
+
 ## Configuration
 
 Publish the config:
