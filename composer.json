@@ -1,5 +1,5 @@
 {
-    "name": "creatorsapi/creatorsapi-laravel",
+    "name": "cre8-it/creatorsapi-laravel",
     "description": "Laravel wrapper for amazon creatorsapi-php-sdk",
     "type": "library",
     "authors": [
