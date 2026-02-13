@@ -13,7 +13,7 @@ return [
         'host' => env('CREATORSAPI_HOST', 'https://creatorsapi.amazon'),
         'user_agent' => env('CREATORSAPI_USER_AGENT', 'creatorsapi-laravel'),
         'debug' => env('CREATORSAPI_DEBUG', false),
-        'debug_file' => env('CREATORSAPI_DEBUG_FILE', 'php://output'),
+        'debug_file' => env('CREATORSAPI_DEBUG_FILE'),
         'temp_folder_path' => env('CREATORSAPI_TEMP_FOLDER'),
     ],
     'http' => [
