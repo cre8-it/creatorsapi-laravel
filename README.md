@@ -4,8 +4,15 @@ Small Laravel wrapper around the Amazon Creators API PHP SDK.
 
 ## Requirements
 
-- PHP 8.1+
-- Laravel 9-12
+- PHP 8.2+ (Laravel 13 requires PHP 8.3+)
+- Laravel 12 or 13
+
+The committed development lockfile targets Laravel 13 / PHP 8.3. The CI matrix also tests Laravel 12 / PHP 8.2 with Orchestra Testbench (see `.github/workflows/tests.yml`). To run the default suite locally:
+
+```bash
+composer install
+vendor/bin/phpunit
+```
 
 ## Configuration
 
