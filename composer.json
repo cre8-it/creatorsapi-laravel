@@ -9,13 +9,22 @@
         }
     ],
     "require": {
-        "php": "^8.1",
+        "php": "^8.2",
         "cre8-it/creatorsapi-php-sdk": "dev-main",
-        "illuminate/support": "^9.0|^10.0|^11.0|^12.0"
+        "illuminate/support": "^12.0|^13.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^10.0|^11.0",
+        "phpunit/phpunit": "^11.0|^12.0"
     },
     "autoload": {
         "psr-4": {
             "CreatorsApi\\Laravel\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "CreatorsApi\\Laravel\\Tests\\": "tests/"
         }
     },
     "extra": {

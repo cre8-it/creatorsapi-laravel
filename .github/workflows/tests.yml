@@ -1,0 +1,35 @@
+name: Tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - php: '8.2'
+            laravel: '12'
+            testbench: '10'
+            phpunit: '11'
+          - php: '8.3'
+            laravel: '13'
+            testbench: '11'
+            phpunit: '12'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: curl, dom, mbstring, xml
+          coverage: none
+      - name: Install dependencies for Laravel ${{ matrix.laravel }}
+        run: >-
+          composer update --with-all-dependencies --no-interaction --no-progress
+          --with "laravel/framework:^${{ matrix.laravel }}"
+          --with "orchestra/testbench:^${{ matrix.testbench }}"
+          --with "phpunit/phpunit:^${{ matrix.phpunit }}"
+      - run: vendor/bin/phpunit
