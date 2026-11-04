@@ -3,6 +3,7 @@
 namespace CreatorsApi\Laravel\Tests;
 
 use Amazon\CreatorsAPI\v1\com\amazon\creators\api\DefaultApi;
+use Amazon\CreatorsAPI\v1\com\amazon\creators\auth\OAuth2Config;
 use Amazon\CreatorsAPI\v1\Configuration;
 use CreatorsApi\Laravel\CreatorsApiClient;
 use CreatorsApi\Laravel\CreatorsApiClientInterface;
@@ -12,6 +13,7 @@ use CreatorsApi\Laravel\GetItemsBuilder;
 use CreatorsApi\Laravel\SearchItemsBuilder;
 use GuzzleHttp\ClientInterface;
 use Orchestra\Testbench\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class CreatorsApiServiceProviderTest extends TestCase
 {
@@ -57,5 +59,40 @@ class CreatorsApiServiceProviderTest extends TestCase
             ->partnerTag('example-tag-20')->keywords('books');
         $this->assertInstanceOf(SearchItemsBuilder::class, $search);
         $this->assertSame('books', $search->getRequest()->getKeywords());
+    }
+
+    public static function lwaCredentialVersions(): array
+    {
+        return [
+            'NA' => ['3.1', 'https://api.amazon.com/auth/o2/token'],
+            'EU' => ['3.2', 'https://api.amazon.co.uk/auth/o2/token'],
+            'FE' => ['3.3', 'https://api.amazon.co.jp/auth/o2/token'],
+        ];
+    }
+
+    #[DataProvider('lwaCredentialVersions')]
+    public function test_provider_passes_lwa_credentials_to_the_sdk(string $version, string $endpoint): void
+    {
+        config()->set('creatorsapi.credentials', [
+            'id' => 'example-lwa-id',
+            'secret' => 'example-lwa-secret',
+            'version' => $version,
+        ]);
+        config()->set('creatorsapi.auth.endpoint', null);
+
+        $sdkConfig = $this->app->make(DefaultApi::class)->getConfig();
+        $this->assertSame('example-lwa-id', $sdkConfig->getCredentialId());
+        $this->assertSame('example-lwa-secret', $sdkConfig->getCredentialSecret());
+        $this->assertSame($version, $sdkConfig->getVersion());
+
+        $oauth = new OAuth2Config(
+            $sdkConfig->getCredentialId(),
+            $sdkConfig->getCredentialSecret(),
+            $sdkConfig->getVersion(),
+            $sdkConfig->getAuthEndpoint(),
+        );
+
+        $this->assertSame($endpoint, $oauth->getTokenEndpoint());
+        $this->assertSame('creatorsapi::default', $oauth->getScope());
     }
 }

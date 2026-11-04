@@ -10,7 +10,7 @@
     ],
     "require": {
         "php": "^8.2",
-        "cre8-it/creatorsapi-php-sdk": "dev-main",
+        "cre8-it/creatorsapi-php-sdk": "^2.0",
         "illuminate/support": "^12.0|^13.0"
     },
     "require-dev": {
